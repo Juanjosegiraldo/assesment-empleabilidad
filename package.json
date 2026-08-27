@@ -17,7 +17,8 @@
     "db:psql": "docker compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB",
     "api:dev": "npm run dev -w @riwi/api",
     "db:index": "tsx db/scripts/index-embeddings.ts",
-    "web:dev": "npm run dev -w @riwi/web"
+    "web:dev": "npm run dev -w @riwi/web",
+    "test": "npm run test -w @riwi/api"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",

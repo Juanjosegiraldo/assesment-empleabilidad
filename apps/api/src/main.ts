@@ -1,53 +1,18 @@
 /**
- * Composition root.
- *
- * The only file allowed to know about every layer at once. It builds the concrete
- * adapters and injects them, which is what lets the domain and the use cases depend on
- * interfaces instead of on pg, express, bcrypt or an AI SDK.
- *
- * Swapping an implementation is an edit here and nowhere else.
+ * Process entry point: start the listener, wire shutdown, and get out of the way.
+ * The wiring itself lives in app.ts so tests can build the same application.
  */
 import { config } from "./config.js";
-import { createServer } from "./interfaces/http/server.js";
-import { buildAuthRouter } from "./interfaces/http/routes/auth.js";
-import { buildMessagingRouter } from "./interfaces/http/routes/messaging.js";
-import { buildCopilotRouter } from "./interfaces/http/routes/copilot.js";
-import { buildStreamRouter } from "./interfaces/http/routes/stream.js";
-import { MessageNotifier } from "./infrastructure/realtime/MessageNotifier.js";
-import { OpenAiCompatibleChatProvider } from "./infrastructure/ai/OpenAiCompatibleChatProvider.js";
-import { OpenAiCompatibleEmbeddingProvider } from "./infrastructure/ai/OpenAiCompatibleEmbeddingProvider.js";
-import { buildRequireAuth } from "./interfaces/http/middleware/requireAuth.js";
-import { BcryptPasswordHasher } from "./infrastructure/security/BcryptPasswordHasher.js";
-import { JwtAccessTokenService } from "./infrastructure/security/JwtAccessTokenService.js";
-import { RandomRefreshTokenFactory } from "./infrastructure/security/RandomRefreshTokenFactory.js";
+import { buildApp } from "./app.js";
 import { closePool, pool } from "./infrastructure/db/pool.js";
-
-const hasher = new BcryptPasswordHasher();
-const accessTokens = new JwtAccessTokenService(config.auth.jwtSecret, config.auth.accessTokenTtlSeconds);
-const refreshTokenFactory = new RandomRefreshTokenFactory(config.auth.refreshTokenTtlDays);
-const requireAuth = buildRequireAuth(accessTokens);
-
-// The two AI adapters. This is the whole of the "the provider must be interchangeable"
-// requirement: the classes implement ports the domain declares, and nothing above this
-// file names them.
-const chat = new OpenAiCompatibleChatProvider(config.ai.chat, config.ai.chat.model);
-const embeddings = new OpenAiCompatibleEmbeddingProvider(
-  config.ai.embeddings,
-  config.ai.embeddings.model,
-  config.ai.embeddings.dimensions,
-);
+import { MessageNotifier } from "./infrastructure/realtime/MessageNotifier.js";
 
 // One connection LISTENing for the whole process, started before the server accepts
 // traffic so no message inserted during boot is missed.
 const notifier = new MessageNotifier();
 await notifier.start();
 
-const app = createServer([
-  buildAuthRouter({ hasher, accessTokens, refreshTokenFactory, requireAuth }),
-  buildMessagingRouter(requireAuth),
-  buildCopilotRouter({ embeddings, chat, requireAuth }),
-  buildStreamRouter(notifier, requireAuth),
-]);
+const app = buildApp({ notifier });
 
 // Fail before accepting traffic if the database is unreachable, rather than serving
 // 500s until somebody notices.
