@@ -12,6 +12,7 @@
   "scripts": {
     "db:up": "docker compose up -d db",
     "db:down": "docker compose down",
+    "db:migrate": "bash db/scripts/migrate.sh",
     "db:psql": "docker compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB"
   }
 }
