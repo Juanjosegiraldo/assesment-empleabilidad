@@ -10,6 +10,7 @@
 import { config } from "./config.js";
 import { createServer } from "./interfaces/http/server.js";
 import { buildAuthRouter } from "./interfaces/http/routes/auth.js";
+import { buildMessagingRouter } from "./interfaces/http/routes/messaging.js";
 import { buildRequireAuth } from "./interfaces/http/middleware/requireAuth.js";
 import { BcryptPasswordHasher } from "./infrastructure/security/BcryptPasswordHasher.js";
 import { JwtAccessTokenService } from "./infrastructure/security/JwtAccessTokenService.js";
@@ -23,6 +24,7 @@ const requireAuth = buildRequireAuth(accessTokens);
 
 const app = createServer([
   buildAuthRouter({ hasher, accessTokens, refreshTokenFactory, requireAuth }),
+  buildMessagingRouter(requireAuth),
 ]);
 
 // Fail before accepting traffic if the database is unreachable, rather than serving
