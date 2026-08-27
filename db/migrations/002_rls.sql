@@ -39,8 +39,10 @@ begin
     raw_value := current_setting('app.current_user_id', true);
 
     if raw_value is null or btrim(raw_value) = '' then
+        -- RW401 is one of the project's own SQLSTATE codes. The full table and the
+        -- HTTP status each one maps to is documented in 003_functions.sql.
         raise exception 'no actor pinned for this transaction'
-            using errcode = 'P0004',
+            using errcode = 'RW401',
                   hint = 'run select set_config(''app.current_user_id'', <user id>, true) first';
     end if;
 
@@ -156,15 +158,21 @@ create policy rw_channel_members_select_shared
 
 -- Prevents reading messages of any channel the actor is not a member of, whether
 -- through the history endpoint, through search, or through copilot retrieval.
--- Soft deleted messages are excluded here, so no query anywhere has to remember to.
+--
+-- Note what this policy does NOT do: it says nothing about deleted_at. A security policy
+-- answers "is this row yours to see", not "is this row still active". Those are
+-- different questions, and mixing them here actively breaks soft delete: PostgreSQL
+-- applies the SELECT policy to the row an UPDATE produces, so a policy demanding
+-- deleted_at is null makes the statement that sets deleted_at illegal.
+--
+-- The lifecycle filter therefore lives in the queries that read messages: the
+-- rw_user_conversations view, the history query, the search function and the copilot
+-- retrieval function all filter deleted_at is null explicitly.
 drop policy if exists rw_messages_select_member on rw_messages;
 create policy rw_messages_select_member
     on rw_messages
     for select
-    using (
-        channel_id in (select rw_actor_channel_ids())
-        and deleted_at is null
-    );
+    using (channel_id in (select rw_actor_channel_ids()));
 
 -- Prevents posting into a channel the actor does not belong to, and prevents forging
 -- the sender: sender_id is checked against the pinned actor, never taken from the body
@@ -255,7 +263,14 @@ drop policy if exists rw_message_embeddings_select_visible on rw_message_embeddi
 create policy rw_message_embeddings_select_visible
     on rw_message_embeddings
     for select
-    using (exists (select 1 from rw_messages m where m.id = message_id));
+    using (
+        exists (
+            select 1
+            from rw_messages m
+            where m.id = message_id
+              and m.deleted_at is null
+        )
+    );
 
 -- No write policy: embeddings are produced by the indexer through the owner connection,
 -- never by the API.
