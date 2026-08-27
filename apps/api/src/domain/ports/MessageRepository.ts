@@ -13,6 +13,8 @@ export type SearchPage = {
 };
 
 export interface MessageRepository {
+  /** One message, if the actor is allowed to see it. Used by the realtime stream. */
+  findById(messageId: number): Promise<Message | null>;
   listByChannel(input: { channelId: number; cursor: string | null; limit: number }): Promise<MessagePage>;
   send(input: { channelId: number; body: string }): Promise<Message>;
   edit(input: { messageId: number; body: string }): Promise<Message>;

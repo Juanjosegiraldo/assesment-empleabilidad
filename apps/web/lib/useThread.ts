@@ -102,7 +102,12 @@ export function useThread(channelId: number | null, currentUserId: number) {
           body: { body },
         });
         setMessages((current) =>
-          current.map((m) => (m.localId === localId ? { ...asSent(message), localId } : m)),
+          current
+            // The realtime stream may have delivered this very message already, since it
+            // announces every insert including our own. Drop that copy before promoting
+            // the optimistic one, or the same id ends up on screen twice.
+            .filter((m) => !(m.id === message.id && m.localId !== localId))
+            .map((m) => (m.localId === localId ? { ...asSent(message), localId } : m)),
         );
       } catch {
         setMessages((current) =>

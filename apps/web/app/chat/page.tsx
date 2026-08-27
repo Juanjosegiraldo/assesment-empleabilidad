@@ -6,6 +6,7 @@ import { useT } from "@/lib/i18n";
 import { useSession } from "@/lib/session";
 import { request } from "@/lib/api";
 import { useThread } from "@/lib/useThread";
+import { useMessageStream } from "@/lib/useMessageStream";
 import { ChannelList } from "@/components/ChannelList";
 import { MessageThread } from "@/components/MessageThread";
 import { MessageComposer } from "@/components/MessageComposer";
@@ -34,6 +35,10 @@ export default function ChatPage() {
   const [zone, setZone] = useState<Zone>("conversation");
 
   const thread = useThread(channelId, user?.id ?? 0);
+
+  // Live delivery. thread.receive ignores a message already on screen, so our own
+  // optimistic send does not appear twice when the stream echoes it back.
+  useMessageStream(channelId, thread.receive);
 
   useEffect(() => {
     if (!loading && !user) router.replace("/login");

@@ -12,6 +12,8 @@ import { createServer } from "./interfaces/http/server.js";
 import { buildAuthRouter } from "./interfaces/http/routes/auth.js";
 import { buildMessagingRouter } from "./interfaces/http/routes/messaging.js";
 import { buildCopilotRouter } from "./interfaces/http/routes/copilot.js";
+import { buildStreamRouter } from "./interfaces/http/routes/stream.js";
+import { MessageNotifier } from "./infrastructure/realtime/MessageNotifier.js";
 import { OpenAiCompatibleChatProvider } from "./infrastructure/ai/OpenAiCompatibleChatProvider.js";
 import { OpenAiCompatibleEmbeddingProvider } from "./infrastructure/ai/OpenAiCompatibleEmbeddingProvider.js";
 import { buildRequireAuth } from "./interfaces/http/middleware/requireAuth.js";
@@ -35,10 +37,16 @@ const embeddings = new OpenAiCompatibleEmbeddingProvider(
   config.ai.embeddings.dimensions,
 );
 
+// One connection LISTENing for the whole process, started before the server accepts
+// traffic so no message inserted during boot is missed.
+const notifier = new MessageNotifier();
+await notifier.start();
+
 const app = createServer([
   buildAuthRouter({ hasher, accessTokens, refreshTokenFactory, requireAuth }),
   buildMessagingRouter(requireAuth),
   buildCopilotRouter({ embeddings, chat, requireAuth }),
+  buildStreamRouter(notifier, requireAuth),
 ]);
 
 // Fail before accepting traffic if the database is unreachable, rather than serving
@@ -54,6 +62,7 @@ const server = app.listen(config.port, () => {
 const shutdown = (signal: string) => {
   console.log(JSON.stringify({ level: "info", message: `${signal} received, shutting down` }));
   server.close(async () => {
+    await notifier.stop();
     await closePool();
     process.exit(0);
   });

@@ -38,6 +38,26 @@ const toMessage = (row: MessageRow): Message => ({
 export class PostgresMessageRepository implements MessageRepository {
   constructor(private readonly client: DbClient) {}
 
+  async findById(messageId: number): Promise<Message | null> {
+    const result = await this.client.query<MessageRow>(
+      `select m.id, m.channel_id, m.sender_id,
+              u.full_name as sender_name, u.job_title as sender_job_title,
+              m.body, m.created_at, m.edited_at,
+              exists (
+                  select 1 from rw_message_reads r
+                  where r.message_id = m.id and r.user_id = rw_current_actor_id()
+              ) as read_by_actor
+       from rw_messages m
+       join rw_users u on u.id = m.sender_id
+       where m.id = $1
+         and m.deleted_at is null`,
+      [messageId],
+    );
+
+    const row = result.rows[0];
+    return row ? toMessage(row) : null;
+  }
+
   async listByChannel(input: {
     channelId: number;
     cursor: string | null;
