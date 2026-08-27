@@ -17,7 +17,7 @@ export function Highlighted({ text }: { text: string }) {
     <>
       {pieces.map((piece, index) =>
         piece.startsWith("<mark>") ? (
-          <mark key={index} className="rounded bg-yellow-200 px-0.5">
+          <mark key={index} className="rounded bg-brand-ring/70 px-0.5 font-semibold text-stone-900">
             {piece.slice("<mark>".length, -"</mark>".length)}
           </mark>
         ) : (

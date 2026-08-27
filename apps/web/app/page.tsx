@@ -17,7 +17,7 @@ export default function HomePage() {
 
   return (
     <main className="flex h-full items-center justify-center">
-      <p className="text-sm text-slate-500">{t("common.loading")}</p>
+      <p className="text-sm text-stone-500">{t("common.loading")}</p>
     </main>
   );
 }

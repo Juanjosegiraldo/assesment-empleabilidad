@@ -14,6 +14,7 @@ import { CopilotPanel } from "@/components/CopilotPanel";
 import { ProfilePanel } from "@/components/ProfilePanel";
 import { SearchPanel } from "@/components/SearchPanel";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
+import { Avatar, BrandMark } from "@/components/BrandMark";
 import type { Conversation } from "@/lib/types";
 
 /**
@@ -83,8 +84,8 @@ export default function ChatPage() {
       requestAnimationFrame(() => {
         const element = document.getElementById(`message-${messageId}`);
         element?.scrollIntoView({ behavior: "smooth", block: "center" });
-        element?.classList.add("ring-2", "ring-brand");
-        setTimeout(() => element?.classList.remove("ring-2", "ring-brand"), 2000);
+        element?.classList.add("ring-2", "ring-brand", "rounded-2xl");
+        setTimeout(() => element?.classList.remove("ring-2", "ring-brand", "rounded-2xl"), 2000);
       });
     },
     [],
@@ -93,7 +94,7 @@ export default function ChatPage() {
   if (loading || !user) {
     return (
       <main className="flex h-full items-center justify-center">
-        <p className="text-sm text-slate-500">{t("common.loading")}</p>
+        <p className="text-sm text-stone-500">{t("common.loading")}</p>
       </main>
     );
   }
@@ -102,11 +103,15 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-2">
-        <h1 className="text-sm font-semibold">{t("app.name")}</h1>
+      <header className="flex items-center justify-between bg-rail px-4 py-2.5 text-white">
+        <div className="flex items-center gap-2.5">
+          <BrandMark />
+          <h1 className="text-sm font-semibold">{t("app.name")}</h1>
+        </div>
         <div className="flex items-center gap-3">
-          <LocaleSwitcher />
-          <span className="hidden text-sm text-slate-600 sm:inline">{user.fullName}</span>
+          <LocaleSwitcher tone="dark" />
+          <span className="hidden text-sm text-stone-300 sm:inline">{user.fullName}</span>
+          <Avatar name={user.fullName} />
         </div>
       </header>
 
@@ -114,7 +119,7 @@ export default function ChatPage() {
         {/* Channels. Always a sidebar from sm upwards; below that it is its own tab,
             because there is no room to show it beside the thread. */}
         <aside
-          className={`w-full shrink-0 overflow-y-auto border-r border-slate-200 bg-white sm:block sm:w-64 lg:w-72 ${
+          className={`scroll-slim w-full shrink-0 overflow-y-auto bg-rail sm:block sm:w-64 lg:w-72 ${
             zone === "channels" ? "block" : "hidden"
           }`}
         >
@@ -124,7 +129,7 @@ export default function ChatPage() {
               openMessage(messageId);
             }}
           />
-          <h2 className="px-4 pt-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <h2 className="px-4 pb-2 pt-4 text-[11px] font-semibold uppercase tracking-wider text-stone-500">
             {t("channels.title")}
           </h2>
           <ChannelList
@@ -142,9 +147,16 @@ export default function ChatPage() {
         >
           {selected ? (
             <>
-              <div className="border-b border-slate-200 bg-white px-4 py-2">
-                <h2 className="font-medium">{selected.name}</h2>
-                {selected.topic ? <p className="text-xs text-slate-500">{selected.topic}</p> : null}
+              <div className="flex items-center gap-2 border-b border-stone-200 bg-white px-4 py-3 sm:px-6">
+                <span aria-hidden="true" className="text-stone-400">
+                  {selected.isPrivate ? "🔒" : "#"}
+                </span>
+                <div className="min-w-0">
+                  <h2 className="truncate font-semibold">{selected.name}</h2>
+                  {selected.topic ? (
+                    <p className="truncate text-xs text-stone-500">{selected.topic}</p>
+                  ) : null}
+                </div>
               </div>
 
               <MessageThread
@@ -166,19 +178,19 @@ export default function ChatPage() {
               />
             </>
           ) : (
-            <p className="m-auto text-sm text-slate-500">{t("thread.selectChannel")}</p>
+            <p className="m-auto text-sm text-stone-500">{t("thread.selectChannel")}</p>
           )}
         </main>
 
         {/* Right column. On desktop it shows the profile above the copilot, so all three
             zones are on screen at once. On mobile each half is a separate tab. */}
         <aside
-          className={`w-full shrink-0 flex-col border-l border-slate-200 bg-white lg:flex lg:w-80 xl:w-96 ${
+          className={`w-full shrink-0 flex-col border-l border-stone-200 bg-white lg:flex lg:w-80 xl:w-96 ${
             zone === "copilot" || zone === "profile" ? "flex" : "hidden"
           }`}
         >
           <div
-            className={`shrink-0 overflow-y-auto border-b border-slate-200 lg:max-h-[26rem] ${
+            className={`scroll-slim shrink-0 overflow-y-auto border-b border-stone-200 lg:max-h-[26rem] ${
               zone === "profile" ? "flex flex-1 lg:flex-none" : "hidden lg:flex"
             }`}
           >
@@ -192,7 +204,7 @@ export default function ChatPage() {
       </div>
 
       {/* Tab bar: the only way to reach the copilot and the profile on a small screen. */}
-      <nav className="flex border-t border-slate-200 bg-white lg:hidden" aria-label={t("app.name")}>
+      <nav className="flex border-t border-stone-200 bg-white lg:hidden" aria-label={t("app.name")}>
         {(["channels", "conversation", "copilot", "profile"] as const).map((option) => (
           <button
             key={option}
@@ -200,7 +212,7 @@ export default function ChatPage() {
             onClick={() => setZone(option)}
             aria-current={zone === option ? "page" : undefined}
             className={`flex-1 py-2.5 text-xs font-medium ${
-              zone === option ? "border-t-2 border-brand text-brand" : "text-slate-500"
+              zone === option ? "border-t-2 border-brand text-brand" : "text-stone-500"
             }`}
           >
             {t(`nav.${option}` as "nav.channels")}

@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // display preference is not worth the round trip.
   return (
     <html lang="es">
-      <body className="h-full bg-slate-100 text-slate-900 antialiased">
+      <body className="h-full bg-canvas text-stone-900 antialiased">
         <I18nProvider>
           <SessionProvider>{children}</SessionProvider>
         </I18nProvider>

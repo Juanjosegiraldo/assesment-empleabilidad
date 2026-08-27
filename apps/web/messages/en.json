@@ -2,6 +2,7 @@
   "app.name": "Riwi Messaging",
   "app.tagline": "Internal communication, secure by design",
 
+  "login.pitch": "Every conversation stays where it belongs. The copilot only reads what you can read, because the rule lives in the database.",
   "login.title": "Sign in",
   "login.subtitle": "Use your work account",
   "login.email": "Email",

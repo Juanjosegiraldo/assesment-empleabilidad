@@ -157,6 +157,8 @@ async function main() {
 
   await mobilePage.getByRole("button", { name: "Copiloto" }).click();
   await mobilePage.waitForTimeout(300);
+  // An empty panel proves the tab exists and nothing else, so ask something first.
+  await askCopilot(mobilePage, PUBLIC_QUESTION);
   await shot(mobilePage, "mobile-copilot");
 
   await mobilePage.getByRole("button", { name: "Perfil" }).click();

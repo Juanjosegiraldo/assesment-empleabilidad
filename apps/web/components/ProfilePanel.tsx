@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useI18n, useT } from "@/lib/i18n";
 import type { SessionUser } from "@/lib/api";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
+import { Avatar } from "@/components/BrandMark";
 
 export function ProfilePanel({ user, onSignOut }: { user: SessionUser; onSignOut: () => void }) {
   const t = useT();
@@ -25,36 +26,31 @@ export function ProfilePanel({ user, onSignOut }: { user: SessionUser; onSignOut
 
   return (
     <div className="flex h-full flex-col p-4">
-      <h2 className="mb-4 font-semibold">{t("profile.title")}</h2>
+      <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-wider text-stone-400">{t("profile.title")}</h2>
 
       <div className="flex items-center gap-3">
-        <div
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand text-lg font-semibold text-white"
-          aria-hidden="true"
-        >
-          {user.fullName.charAt(0)}
-        </div>
+        <Avatar name={user.fullName} size="lg" />
         <div className="min-w-0">
           <p className="truncate font-medium">{user.fullName}</p>
-          <p className="truncate text-sm text-slate-500">{user.jobTitle}</p>
+          <p className="truncate text-sm text-stone-500">{user.jobTitle}</p>
         </div>
       </div>
 
       <dl className="mt-5 space-y-3 text-sm">
         <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <dt className="text-[11px] font-semibold uppercase tracking-wider text-stone-400">
             {t("profile.email")}
           </dt>
-          <dd className="truncate text-slate-700">{user.email}</dd>
+          <dd className="truncate text-stone-700">{user.email}</dd>
         </div>
         <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <dt className="text-[11px] font-semibold uppercase tracking-wider text-stone-400">
             {t("profile.role")}
           </dt>
-          <dd className="text-slate-700">{user.jobTitle}</dd>
+          <dd className="text-stone-700">{user.jobTitle}</dd>
         </div>
         <div>
-          <dt className="mb-1 text-xs font-medium uppercase tracking-wide text-slate-400">
+          <dt className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-stone-400">
             {t("profile.language")}
           </dt>
           <dd>
@@ -67,7 +63,7 @@ export function ProfilePanel({ user, onSignOut }: { user: SessionUser; onSignOut
       <button
         type="button"
         onClick={onSignOut}
-        className="mt-6 rounded-md border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50"
+        className="mt-6 rounded-xl border border-stone-300 px-3 py-2 text-sm font-semibold text-stone-700 transition hover:border-brand hover:text-brand"
       >
         {t("nav.signOut")}
       </button>

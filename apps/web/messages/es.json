@@ -2,6 +2,7 @@
   "app.name": "Riwi Mensajería",
   "app.tagline": "Comunicación interna, segura por diseño",
 
+  "login.pitch": "Cada conversación queda donde debe quedar. El copiloto solo lee lo que tú puedes leer, porque la regla vive en la base de datos.",
   "login.title": "Iniciar sesión",
   "login.subtitle": "Usa tu cuenta corporativa",
   "login.email": "Correo",

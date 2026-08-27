@@ -5,7 +5,10 @@ by hand, so they can be regenerated after any change and always show the same sc
 
 ```bash
 npm run api:dev
-npm run web:dev
+
+npm run build -w @riwi/web    # captured against the production build, so the
+npm run start -w @riwi/web    # development overlay is not in the screenshots
+
 npm run evidence
 ```
 
