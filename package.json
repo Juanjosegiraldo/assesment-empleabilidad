@@ -14,7 +14,8 @@
     "db:down": "docker compose down",
     "db:migrate": "bash db/scripts/migrate.sh",
     "db:seed": "tsx db/scripts/load-seed.ts",
-    "db:psql": "docker compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB"
+    "db:psql": "docker compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB",
+    "api:dev": "npm run dev -w @riwi/api"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",
