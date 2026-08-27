@@ -6,6 +6,8 @@ const config: NextConfig = {
   // project already documents its own rules in the root CLAUDE.md, so the generated
   // ones are only noise in the diff.
   agentRules: false,
+  // The floating dev indicator overlaps the interface and ends up in every screenshot.
+  devIndicators: false,
 };
 
 export default config;

@@ -169,8 +169,17 @@ The assessment asks whether a pattern is necessary and, if applied, why.
   functions, policies, procedures, triggers. An ORM's value is hiding SQL, which is
   precisely what must stay visible here. Written up in DECISIONS.md.
 
-## Not built yet
+## Where each piece ended up
 
-Authentication, the channel and message endpoints, the copilot and the realtime stream
-land in later commits. Their shape is described above so the layering can be checked as
-they arrive.
+| Concern | Files |
+| --- | --- |
+| Authentication | `application/auth/`, `infrastructure/security/`, `interfaces/http/routes/auth.ts` |
+| Channels and messages | `application/messaging/`, `infrastructure/repositories/Postgres{Channel,Message}Repository.ts` |
+| Copilot | `application/copilot/askCopilot.ts`, `infrastructure/ai/`, `domain/ports/{Chat,Embedding}Provider.ts` |
+| Realtime | `infrastructure/realtime/MessageNotifier.ts`, `interfaces/http/routes/stream.ts` |
+| Composition | `app.ts` builds the graph; `main.ts` only starts the process |
+
+`app.ts` is split from `main.ts` so the integration tests can mount the real application,
+with the real database behind it, without opening a port. Mocking the database there would
+defeat the purpose: what the tests have to prove is that PostgreSQL refuses, and a mock
+refuses whatever it was told to.

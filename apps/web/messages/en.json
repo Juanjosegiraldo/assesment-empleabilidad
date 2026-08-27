@@ -10,6 +10,7 @@
   "login.submitting": "Signing in…",
   "login.failed": "Invalid email or password",
 
+  "nav.channels": "Channels",
   "nav.conversation": "Conversation",
   "nav.copilot": "Copilot",
   "nav.profile": "Profile",

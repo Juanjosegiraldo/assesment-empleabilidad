@@ -23,7 +23,7 @@ import type { Conversation } from "@/lib/types";
  * so they become tabs and one shows at a time. Same components either way: the layout
  * changes, the code does not fork.
  */
-type Zone = "conversation" | "copilot" | "profile";
+type Zone = "channels" | "conversation" | "copilot" | "profile";
 
 export default function ChatPage() {
   const t = useT();
@@ -33,6 +33,12 @@ export default function ChatPage() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [channelId, setChannelId] = useState<number | null>(null);
   const [zone, setZone] = useState<Zone>("conversation");
+
+  // On a phone there is no sidebar, so the first thing shown has to be the channel list.
+  // matchMedia rather than a width check: it is the same breakpoint Tailwind uses for sm.
+  useEffect(() => {
+    if (!window.matchMedia("(min-width: 640px)").matches) setZone("channels");
+  }, []);
 
   const thread = useThread(channelId, user?.id ?? 0);
 
@@ -105,10 +111,11 @@ export default function ChatPage() {
       </header>
 
       <div className="flex min-h-0 flex-1">
-        {/* Channels: a sidebar on desktop, folded into the conversation tab on mobile. */}
+        {/* Channels. Always a sidebar from sm upwards; below that it is its own tab,
+            because there is no room to show it beside the thread. */}
         <aside
-          className={`w-full shrink-0 overflow-y-auto border-r border-slate-200 bg-white sm:w-64 lg:w-72 ${
-            zone === "conversation" ? "hidden sm:block" : "hidden sm:block"
+          className={`w-full shrink-0 overflow-y-auto border-r border-slate-200 bg-white sm:block sm:w-64 lg:w-72 ${
+            zone === "channels" ? "block" : "hidden"
           }`}
         >
           <SearchPanel
@@ -120,11 +127,18 @@ export default function ChatPage() {
           <h2 className="px-4 pt-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
             {t("channels.title")}
           </h2>
-          <ChannelList conversations={conversations} selectedId={channelId} onSelect={setChannelId} />
+          <ChannelList
+            conversations={conversations}
+            selectedId={channelId}
+            onSelect={(id) => {
+              setChannelId(id);
+              setZone("conversation");
+            }}
+          />
         </aside>
 
         <main
-          className={`flex min-w-0 flex-1 flex-col ${zone === "conversation" ? "flex" : "hidden lg:flex"}`}
+          className={`min-w-0 flex-1 flex-col ${zone === "conversation" ? "flex" : "hidden lg:flex"}`}
         >
           {selected ? (
             <>
@@ -164,7 +178,7 @@ export default function ChatPage() {
           }`}
         >
           <div
-            className={`shrink-0 overflow-y-auto border-b border-slate-200 lg:max-h-80 ${
+            className={`shrink-0 overflow-y-auto border-b border-slate-200 lg:max-h-[26rem] ${
               zone === "profile" ? "flex flex-1 lg:flex-none" : "hidden lg:flex"
             }`}
           >
@@ -179,7 +193,7 @@ export default function ChatPage() {
 
       {/* Tab bar: the only way to reach the copilot and the profile on a small screen. */}
       <nav className="flex border-t border-slate-200 bg-white lg:hidden" aria-label={t("app.name")}>
-        {(["conversation", "copilot", "profile"] as const).map((option) => (
+        {(["channels", "conversation", "copilot", "profile"] as const).map((option) => (
           <button
             key={option}
             type="button"
@@ -189,7 +203,7 @@ export default function ChatPage() {
               zone === option ? "border-t-2 border-brand text-brand" : "text-slate-500"
             }`}
           >
-            {t(`nav.${option}` as "nav.conversation")}
+            {t(`nav.${option}` as "nav.channels")}
           </button>
         ))}
       </nav>

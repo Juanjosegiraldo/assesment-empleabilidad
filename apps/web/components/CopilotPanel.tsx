@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useT } from "@/lib/i18n";
 import { request } from "@/lib/api";
-import type { CopilotAnswer } from "@/lib/types";
+import type { CopilotAnswer, CopilotUsage } from "@/lib/types";
 
 const REFUSAL_LABEL = {
   insufficient_context: "copilot.refusal.insufficient_context",
@@ -17,6 +17,17 @@ export function CopilotPanel({ onOpenMessage }: { onOpenMessage: (messageId: num
   const [answer, setAnswer] = useState<CopilotAnswer | null>(null);
   const [asking, setAsking] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [usage, setUsage] = useState<CopilotUsage | null>(null);
+
+  // Consumption is shown next to the thing that spends it, and refreshed after every
+  // question so the number the user sees is the one they just changed.
+  const loadUsage = useCallback(() => {
+    request<CopilotUsage>("/copilot/usage")
+      .then(setUsage)
+      .catch(() => setUsage(null));
+  }, []);
+
+  useEffect(loadUsage, [loadUsage]);
 
   const ask = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -32,6 +43,7 @@ export function CopilotPanel({ onOpenMessage }: { onOpenMessage: (messageId: num
       setFailed(true);
     } finally {
       setAsking(false);
+      loadUsage();
     }
   };
 
@@ -110,6 +122,12 @@ export function CopilotPanel({ onOpenMessage }: { onOpenMessage: (messageId: num
           </div>
         ) : null}
       </div>
+
+      {usage && usage.call_count > 0 ? (
+        <p className="border-t border-slate-200 px-4 py-2 text-[11px] text-slate-400">
+          {t("copilot.usage", { total: usage.total_tokens, calls: usage.call_count })}
+        </p>
+      ) : null}
     </div>
   );
 }

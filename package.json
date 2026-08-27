@@ -18,7 +18,8 @@
     "api:dev": "npm run dev -w @riwi/api",
     "db:index": "tsx db/scripts/index-embeddings.ts",
     "web:dev": "npm run dev -w @riwi/web",
-    "test": "npm run test -w @riwi/api"
+    "test": "npm run test -w @riwi/api",
+    "evidence": "tsx scripts/capture-evidence.mts"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",
@@ -26,6 +27,7 @@
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "pg": "^8.23.0",
+    "playwright": "^1.62.1",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   }
