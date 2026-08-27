@@ -1,25 +1,29 @@
-import express, { type Express } from "express";
+import express, { type Express, type Router } from "express";
+import cookieParser from "cookie-parser";
 import { correlationId } from "./middleware/correlationId.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import { healthRouter } from "./routes/health.js";
 import { config } from "../../config.js";
 
 /**
- * Builds the Express application.
+ * Builds the Express application from routers the composition root already assembled.
  *
- * Kept separate from main.ts so tests can mount the app without opening a port.
+ * The routers arrive built rather than being imported here, so this file knows nothing
+ * about repositories, token services or hashing. Tests mount the app with their own
+ * routers and never open a port.
  *
  * Express 5 forwards a rejected promise from a handler to the error middleware on its
  * own, which is why no route in this codebase wraps its body in try/catch.
  */
-export function createServer(): Express {
+export function createServer(routers: Router[]): Express {
   const app = express();
 
   app.use(correlationId);
   app.use(express.json({ limit: "64kb" }));
+  app.use(cookieParser());
 
-  // The browser sends the refresh token as a cookie, so the response has to allow
-  // credentials and the origin cannot be a wildcard.
+  // The refresh token travels as a cookie, so the response has to allow credentials,
+  // and an origin allowing credentials cannot be a wildcard.
   app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", config.corsOrigin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -33,6 +37,7 @@ export function createServer(): Express {
   });
 
   app.use(healthRouter);
+  for (const router of routers) app.use(router);
 
   // Order matters: the catch all 404 goes after every route, the error handler last.
   app.use(notFoundHandler);
