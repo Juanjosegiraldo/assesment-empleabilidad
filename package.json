@@ -1,0 +1,17 @@
+{
+  "name": "riwi-messaging",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Internal messaging platform for Riwi Co. S.A.S. with an AI copilot",
+  "workspaces": [
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose down",
+    "db:psql": "docker compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB"
+  }
+}

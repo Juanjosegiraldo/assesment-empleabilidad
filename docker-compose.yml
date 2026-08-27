@@ -1,0 +1,29 @@
+# Local stack for the Riwi messaging platform.
+# The api and web services are added in later steps, once they exist.
+services:
+  db:
+    # pgvector image instead of the plain postgres one: the copilot stores message
+    # embeddings in the same database, so there is no separate vector store to run.
+    image: pgvector/pgvector:pg16
+    container_name: riwi_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # The assessment requires every timestamp to be stored in UTC.
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      # Other services will wait on this before starting.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db_data:
