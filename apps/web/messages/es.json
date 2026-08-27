@@ -1,0 +1,65 @@
+{
+  "app.name": "Riwi Mensajería",
+  "app.tagline": "Comunicación interna, segura por diseño",
+
+  "login.title": "Iniciar sesión",
+  "login.subtitle": "Usa tu cuenta corporativa",
+  "login.email": "Correo",
+  "login.password": "Contraseña",
+  "login.submit": "Entrar",
+  "login.submitting": "Entrando…",
+  "login.failed": "Correo o contraseña incorrectos",
+
+  "nav.conversation": "Conversación",
+  "nav.copilot": "Copiloto",
+  "nav.profile": "Perfil",
+  "nav.signOut": "Cerrar sesión",
+
+  "channels.title": "Canales",
+  "channels.private": "Privado",
+  "channels.empty": "No perteneces a ningún canal todavía.",
+  "channels.unread": "{count} sin leer",
+
+  "thread.empty": "Todavía no hay mensajes en este canal.",
+  "thread.selectChannel": "Elige un canal para empezar.",
+  "thread.loadingOlder": "Cargando mensajes anteriores…",
+  "thread.startOfHistory": "Este es el comienzo de la conversación.",
+  "thread.edited": "editado",
+  "thread.retry": "Reintentar",
+  "thread.status.pending": "Enviando…",
+  "thread.status.failed": "No se pudo enviar",
+  "thread.error": "No se pudo cargar la conversación.",
+  "thread.reload": "Reintentar",
+
+  "composer.placeholder": "Escribe un mensaje…",
+  "composer.send": "Enviar",
+
+  "search.placeholder": "Buscar en tus canales…",
+  "search.results": "{count} resultados",
+  "search.empty": "Sin resultados.",
+  "search.hint": "Escribe al menos 2 caracteres.",
+  "search.close": "Cerrar búsqueda",
+
+  "copilot.title": "Copiloto",
+  "copilot.intro": "Pregunta sobre lo que se ha hablado en tus canales. Solo puede leer lo que tú puedes leer.",
+  "copilot.placeholder": "¿Qué quieres saber?",
+  "copilot.ask": "Preguntar",
+  "copilot.thinking": "Buscando en tus canales…",
+  "copilot.sources": "Fuentes",
+  "copilot.usage": "{total} tokens en {calls} consultas",
+  "copilot.refusal.insufficient_context": "Contexto insuficiente",
+  "copilot.refusal.no_permission": "Sin permisos",
+  "copilot.refusal.out_of_scope": "Fuera de alcance",
+  "copilot.error": "El copiloto no está disponible en este momento.",
+
+  "profile.title": "Tu perfil",
+  "profile.role": "Cargo",
+  "profile.email": "Correo",
+  "profile.language": "Idioma",
+  "profile.copilotUsage": "Consumo del copiloto",
+  "profile.calls": "Consultas",
+  "profile.tokens": "Tokens",
+
+  "common.retry": "Reintentar",
+  "common.loading": "Cargando…"
+}

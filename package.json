@@ -16,7 +16,8 @@
     "db:seed": "tsx db/scripts/load-seed.ts",
     "db:psql": "docker compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB",
     "api:dev": "npm run dev -w @riwi/api",
-    "db:index": "tsx db/scripts/index-embeddings.ts"
+    "db:index": "tsx db/scripts/index-embeddings.ts",
+    "web:dev": "npm run dev -w @riwi/web"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",

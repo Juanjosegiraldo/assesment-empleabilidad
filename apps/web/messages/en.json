@@ -1,0 +1,65 @@
+{
+  "app.name": "Riwi Messaging",
+  "app.tagline": "Internal communication, secure by design",
+
+  "login.title": "Sign in",
+  "login.subtitle": "Use your work account",
+  "login.email": "Email",
+  "login.password": "Password",
+  "login.submit": "Sign in",
+  "login.submitting": "Signing in…",
+  "login.failed": "Invalid email or password",
+
+  "nav.conversation": "Conversation",
+  "nav.copilot": "Copilot",
+  "nav.profile": "Profile",
+  "nav.signOut": "Sign out",
+
+  "channels.title": "Channels",
+  "channels.private": "Private",
+  "channels.empty": "You do not belong to any channel yet.",
+  "channels.unread": "{count} unread",
+
+  "thread.empty": "No messages in this channel yet.",
+  "thread.selectChannel": "Pick a channel to start.",
+  "thread.loadingOlder": "Loading earlier messages…",
+  "thread.startOfHistory": "This is the beginning of the conversation.",
+  "thread.edited": "edited",
+  "thread.retry": "Retry",
+  "thread.status.pending": "Sending…",
+  "thread.status.failed": "Could not send",
+  "thread.error": "Could not load the conversation.",
+  "thread.reload": "Try again",
+
+  "composer.placeholder": "Write a message…",
+  "composer.send": "Send",
+
+  "search.placeholder": "Search your channels…",
+  "search.results": "{count} results",
+  "search.empty": "No results.",
+  "search.hint": "Type at least 2 characters.",
+  "search.close": "Close search",
+
+  "copilot.title": "Copilot",
+  "copilot.intro": "Ask about what has been said in your channels. It can only read what you can read.",
+  "copilot.placeholder": "What do you want to know?",
+  "copilot.ask": "Ask",
+  "copilot.thinking": "Searching your channels…",
+  "copilot.sources": "Sources",
+  "copilot.usage": "{total} tokens across {calls} questions",
+  "copilot.refusal.insufficient_context": "Not enough context",
+  "copilot.refusal.no_permission": "Not allowed",
+  "copilot.refusal.out_of_scope": "Out of scope",
+  "copilot.error": "The copilot is unavailable right now.",
+
+  "profile.title": "Your profile",
+  "profile.role": "Role",
+  "profile.email": "Email",
+  "profile.language": "Language",
+  "profile.copilotUsage": "Copilot usage",
+  "profile.calls": "Questions",
+  "profile.tokens": "Tokens",
+
+  "common.retry": "Retry",
+  "common.loading": "Loading…"
+}

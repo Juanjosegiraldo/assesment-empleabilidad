@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #4f46e5;
+  --color-brand-soft: #eef2ff;
+}
+
+/* The message thread scrolls internally, so the page itself never does. */
+html,
+body {
+  height: 100%;
+  overscroll-behavior-y: none;
+}
+
+/* Keyboard users must always be able to see where they are. */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
