@@ -24,8 +24,16 @@ Work in progress. This file grows with each step; the full setup guide lands at 
 
 ```bash
 cp .env.example .env      # then fill in the real values
+npm install
 npm run db:up             # starts PostgreSQL on the port set in .env
+npm run db:migrate        # applies db/migrations in order
+npm run db:seed           # loads db/seed.json (add -- --reset to reload)
 ```
+
+Every seeded account uses the password `Riwi2026*`. Sign in as
+`juan.jose.giraldo@riwi.io` for the demo: that account belongs to three public channels
+and to neither of the two private ones, which is what makes the permission checks
+visible.
 
 Check that the database is up:
 

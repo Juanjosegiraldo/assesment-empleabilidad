@@ -6,6 +6,7 @@ out/
 
 # Local tooling state
 .claude/settings.local.json
+.claude/*.tmp.*
 
 # Secrets: only .env.example is tracked
 .env
