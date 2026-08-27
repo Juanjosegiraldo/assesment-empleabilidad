@@ -192,7 +192,10 @@ create table if not exists rw_message_embeddings (
     -- an extra unique constraint.
     -- why CASCADE: derived data, fully rebuildable by rerunning the indexer.
     message_id bigint      primary key references rw_messages (id) on delete cascade,
-    embedding  vector(1024) not null,   -- nvidia/nv-embedqa-e5-v5 output size
+    -- The dimension is fixed by the embedding model, not chosen freely: a vector
+    -- column has to declare it, and a mismatch is rejected on insert. See
+    -- AI_EMBEDDING_DIMENSIONS in .env.example.
+    embedding  vector(768) not null,    -- nomic-embed-text output size
     model      text        not null,     -- which model produced it, so we can reindex
     created_at timestamptz not null default now()
 );

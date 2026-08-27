@@ -42,6 +42,24 @@ export const config = {
     accessTokenTtlSeconds: durationToSeconds(process.env.ACCESS_TOKEN_TTL ?? "15m"),
     refreshTokenTtlDays: optionalNumber("REFRESH_TOKEN_TTL_DAYS", 7),
   },
+  ai: {
+    // Two independent providers behind the same OpenAI compatible wire format: chat on a
+    // hosted API, embeddings on a local model. Swapping either is a change to .env.
+    chat: {
+      baseUrl: process.env.AI_CHAT_BASE_URL ?? "https://integrate.api.nvidia.com/v1",
+      apiKey: required("AI_CHAT_API_KEY"),
+      model: process.env.AI_CHAT_MODEL ?? "openai/gpt-oss-20b",
+    },
+    embeddings: {
+      baseUrl: process.env.AI_EMBEDDING_BASE_URL ?? "http://localhost:11434/v1",
+      apiKey: process.env.AI_EMBEDDING_API_KEY ?? "ollama",
+      model: process.env.AI_EMBEDDING_MODEL ?? "nomic-embed-text",
+      // Must match the vector(n) column in the schema. The provider checks every vector
+      // against it and fails loudly rather than letting a mismatch surface as an opaque
+      // insert error later.
+      dimensions: optionalNumber("AI_EMBEDDING_DIMENSIONS", 768),
+    },
+  },
   database: {
     // The API connects as rw_app, never as the owner. rw_app has NOBYPASSRLS, so the
     // row level security policies apply to everything this process does.

@@ -11,6 +11,9 @@ import { config } from "./config.js";
 import { createServer } from "./interfaces/http/server.js";
 import { buildAuthRouter } from "./interfaces/http/routes/auth.js";
 import { buildMessagingRouter } from "./interfaces/http/routes/messaging.js";
+import { buildCopilotRouter } from "./interfaces/http/routes/copilot.js";
+import { OpenAiCompatibleChatProvider } from "./infrastructure/ai/OpenAiCompatibleChatProvider.js";
+import { OpenAiCompatibleEmbeddingProvider } from "./infrastructure/ai/OpenAiCompatibleEmbeddingProvider.js";
 import { buildRequireAuth } from "./interfaces/http/middleware/requireAuth.js";
 import { BcryptPasswordHasher } from "./infrastructure/security/BcryptPasswordHasher.js";
 import { JwtAccessTokenService } from "./infrastructure/security/JwtAccessTokenService.js";
@@ -22,9 +25,20 @@ const accessTokens = new JwtAccessTokenService(config.auth.jwtSecret, config.aut
 const refreshTokenFactory = new RandomRefreshTokenFactory(config.auth.refreshTokenTtlDays);
 const requireAuth = buildRequireAuth(accessTokens);
 
+// The two AI adapters. This is the whole of the "the provider must be interchangeable"
+// requirement: the classes implement ports the domain declares, and nothing above this
+// file names them.
+const chat = new OpenAiCompatibleChatProvider(config.ai.chat, config.ai.chat.model);
+const embeddings = new OpenAiCompatibleEmbeddingProvider(
+  config.ai.embeddings,
+  config.ai.embeddings.model,
+  config.ai.embeddings.dimensions,
+);
+
 const app = createServer([
   buildAuthRouter({ hasher, accessTokens, refreshTokenFactory, requireAuth }),
   buildMessagingRouter(requireAuth),
+  buildCopilotRouter({ embeddings, chat, requireAuth }),
 ]);
 
 // Fail before accepting traffic if the database is unreachable, rather than serving
